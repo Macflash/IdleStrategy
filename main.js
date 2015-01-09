@@ -13,7 +13,7 @@ var game;
 //ideally called about once per sec
 function update(){
 	//update markers
-	updateMarkers(game,1);
+	updateMarkers(game);
 	
 	//update bank
 	updateBank(player1, 1);
@@ -26,8 +26,10 @@ function updateBank(player, time){
 	player1.bank += time;
 }
 
-function updateMarkers(player, time){
-	
+function updateMarkers(gb){
+	for(i = 0; i < gb.countries.length; i++){
+		gb.countries[i].marker.innerHTML = "1";
+	}
 }
 
 function setConstUI(player){
@@ -36,6 +38,7 @@ function setConstUI(player){
 }
 
 function init(){
+	//connect navigation ui
 	main_ui = document.getElementById("main-ui");
 	dev_ui = document.getElementById("dev-ui");
 	mil_ui = document.getElementById("mil-ui");
@@ -45,13 +48,23 @@ function init(){
 	mil_ui.style.display = "none";
 	res_ui.style.display = "none";
 	
+	//connect player ui
 	bank_ui = document.getElementById("bank_ui");
 	research_ui = document.getElementById("research_ui");
+	
+	//connect markers
+	initmarkers(game);
 	
 	update();
 	setInterval(update, 1000);
 	
 	//return 0;
+}
+
+function initmarkers(gb){
+	for(i = 0; i < gb.countries.length; i++){
+		gb.countries[i].marker = document.getElementById(gb.countries[i].name);
+	}
 }
 
 // UI navigation functions

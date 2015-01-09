@@ -1,27 +1,19 @@
 //STUB
 
-// GameBoard --
-function gameboard(countries, map, players, markers){
-	this.countries = countries;
-	this.map = map;
-	this.players = players;
-}
-
 // Country ----
-function country(name, x, y, maxVal, dev, fort){
+function country(name, maxVal, dev, fort){
 	this.name = name;
-	this.x = x;
-	this.y = y;
 	this.maxVal = maxVal;
 	this.dev = dev;
 	this.fort = fort;
+	this.marker = null;
 	this.isHabitable = true;
 }
 
 // Countries --
 var countries = [];
 
-var britain = new country("Britain",15,4,1,true);
+var britain = new country("Britain",15,4,1);
 countries.push(britain);
 
 // Map --------
@@ -36,6 +28,16 @@ function player(name, bank, research){
 	this.research = research;
 }
 
-player1 = new player("player1", 100,0);
-
 var players = [];
+player1 = new player("player1", 100,0);
+players.push(player1);
+
+
+//GameBoard --
+function gameboard(countries, map, players){
+	this.countries = countries;
+	this.map = map;
+	this.players = players;
+}
+
+var game = new gameboard(countries,map,players);
