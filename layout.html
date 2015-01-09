@@ -1,6 +1,44 @@
 <script type="text/javascript" src="data.js"></script>
 <script type="text/javascript" src="main.js"></script>
-<div>
-<div class="row"><div class="cell"></div></div>
-<div class="row"></div>
+<link rel="stylesheet" type="text/css" href="layout.css" />
+<body onload="init()">
+<div class="gameboard">
+
+<!-- World Map -->
+<div class="map"><image src="map.png"/></div>
+
+<!-- Player UI Overlay -->
+<div class="row">
+<div class="cell"><a href="#" onclick="home()">IdleStrategy</a></div>
+<div class="rightcell">Research: <div id="research_ui">0</div></div>
+<div class="rightcell">Bank: <div id="bank_ui">0</div></div>
 </div>
+
+<!-- Main UI Overlay -->
+<div id="main-ui">
+<div class="row"><div class="cell"><a href="#" onclick="dev()">Development</a></div></div>
+<div class="row"><div class="cell"><a href="#" onclick="mil()">Military</a></div></div>
+<div class="row"><div class="cell"><a href="#" onclick="res()">Research</a></div></div>
+</div>
+
+<!-- Development UI Overlay -->
+<div id="dev-ui">
+<div class="row"><div class="cell"><a href="#" onclick="dev()">Dev</a></div></div>
+</div>
+
+<!-- Military UI Overlay -->
+<div id="mil-ui">
+<div class="row"><div class="cell"><a href="#" onclick="mil()">Mil</a></div></div>
+</div>
+
+<!-- Research UI Overlay -->
+<div id="res-ui">
+<div class="row"><div class="cell"><a href="#" onclick="res()">Res</a></div></div>
+</div>
+
+<!-- Game Marker Overlay -->
+<div class="marker" id="Britain" style="top: 250px; left: 250px;">X</div>
+
+
+</div>
+</body>

@@ -1,13 +1,53 @@
 body {
-background-color:dark-grey;
+background-color:darkgrey;
+width: 1000px;
 }
 
 .row {
-width:100%;
+width: 100%;
+height: 180px;
 clear: both;
+border-style: solid;
+border-width: 0px;
+border-color: red;
 }
 
-.cell {
+.cell, .rightcell {
 width:150px;
+padding-top:15px;
+padding-bottom:15px;
+margin-left: 5px;
+margin-right: 5px;
 float:left;
+background-color:grey;
+text-align:center;
+}
+
+.rightcell {
+	float:right;
+}
+
+.map {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -2;
+}
+
+.gameboard {
+	height: 720px;
+	width: 1000px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -1;
+}
+
+.marker {
+	width: 30px;
+	position: absolute;
+	z-index: 0;
+	text-align:center;
+	padding: 9px 0px 9px 0px;
+	background-color:grey;
 }
