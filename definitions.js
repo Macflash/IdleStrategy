@@ -5,6 +5,7 @@ function country(name, maxVal, dev, fort){
 	this.maxVal = maxVal;
 	this.dev = dev;
 	this.fort = fort;
+	this.owner = null;
 	this.marker = null;
 	this.isHabitable = true;
 }
