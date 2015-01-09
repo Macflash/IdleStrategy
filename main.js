@@ -1,40 +1,18 @@
-//STUB
-
+//MAIN.JS - UI handling
 var main_ui;
 var dev_ui;
 var mil_ui;
 var res_ui;
 
+//used to determine what our country clicks mean
+var current_context = "home";
+
 var bank_ui;
 var research_ui;
 
-var game;
-
-//ideally called about once per sec
-function update(){
-	//update markers
-	updateMarkers(game);
-	
-	//update bank
-	updateBank(player1, 1);
-	
-	//player1.bank = player1.bank + 1;
-	setConstUI(player1);
-}
-
-function updateBank(player, time){
-	player1.bank += time;
-}
-
-function updateMarkers(gb){
-	for(i = 0; i < gb.countries.length; i++){
-		gb.countries[i].marker.innerHTML = "1";
-	}
-}
-
-function setConstUI(player){
-	bank_ui.innerHTML = player1.bank;
-	research_ui.innerHTML = player1.research;
+function setConstUI(p){
+	bank_ui.innerHTML = p.bank;
+	research_ui.innerHTML = p.research;
 }
 
 function init(){
@@ -56,15 +34,9 @@ function init(){
 	initmarkers(game);
 	
 	update();
-	setInterval(update, 1000);
+	setInterval(update, tstep);
 	
 	//return 0;
-}
-
-function initmarkers(gb){
-	for(i = 0; i < gb.countries.length; i++){
-		gb.countries[i].marker = document.getElementById(gb.countries[i].name);
-	}
 }
 
 // UI navigation functions
@@ -74,6 +46,7 @@ function home(){
 	res_ui.style.display = "none";
 	
 	main_ui.style.display = "block";
+	current_context = "home"
 	//return 0;
 }
 
@@ -83,6 +56,7 @@ function dev(){
 	res_ui.style.display = "none";
 	
 	dev_ui.style.display = "block";
+	current_context = "dev"
 	//return 0;
 }
 
@@ -92,6 +66,7 @@ function mil(){
 	res_ui.style.display = "none";
 	
 	mil_ui.style.display = "block";
+	current_context = "mil"
 	//return 0;
 }
 
@@ -101,5 +76,6 @@ function res(){
 	mil_ui.style.display = "none";
 	
 	res_ui.style.display = "block";
+	current_context = "res"
 	//return 0;
 }

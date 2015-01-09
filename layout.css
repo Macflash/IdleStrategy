@@ -48,6 +48,19 @@ text-align:center;
 	position: absolute;
 	z-index: 0;
 	text-align:center;
-	padding: 9px 0px 9px 0px;
+	padding: 9px 0px 2px 0px;
 	background-color:grey;
+}
+
+.val {
+	color: white;
+}
+
+.payBar, .upBar {
+	width: 100%;
+	height: 2px;
+	background-color: yellow;
+}
+.upBar {
+	background-color: orange;
 }
