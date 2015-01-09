@@ -74,11 +74,30 @@ function updateMarkers(gb){
 		var c = gb.countries[i];
 		c.marker.m.style.backgroundColor = gb.colors[c.owner];
 		
+		//main view (prog bars + dev/fort)
+		if(current_context == "home"){
 		c.marker.v.innerHTML = c.dev + "/" + c.fort;
-		
 		c.marker.p.style.width = (c.payProg / (5 * step)) * 100 + "%";
-		
 		c.marker.u.style.width = (c.upProg / (c.dev * (10 * step))) * 100 + "%";
+		}
+		//dev view (prog bars + dev/max-fort)
+		if(current_context == "dev"){
+			c.marker.v.innerHTML = c.dev + "/" + (c.maxVal - c.fort);
+			c.marker.p.style.width = (c.payProg / (5 * step)) * 100 + "%";
+			c.marker.u.style.width = (c.upProg / (c.dev * (10 * step))) * 100 + "%";
+		}
+		//mil view (fort/max)
+		if(current_context == "mil"){
+			c.marker.v.innerHTML = c.fort + "/" + (c.maxVal - c.dev);
+			c.marker.p.style.width = "0%";
+			c.marker.u.style.width = "0%";
+		}
+		//res view (dev)
+		if(current_context == "res"){
+			c.marker.v.innerHTML = c.dev;
+			c.marker.p.style.width = "0%";
+			c.marker.u.style.width = "0%";
+		}
 	}
 }
 
