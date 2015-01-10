@@ -1,24 +1,30 @@
-//MAIN.JS - UI handling
+// MAIN.JS
+// Alex Breyfogle c2015
+
+// UI Overlay Globals
 var main_ui;
 var dev_ui;
 var mil_ui;
 var res_ui;
 
-//used to determine what our country clicks mean
+// Country Click Handling & Drawing Globals
 var current_context = "home";
 var canvas;
 var ctx;
 
+// Context Specific UI Globals
 var bank_ui;
 var research_ui;
-
 var attack_stat_ui;
+var attack_list_ui;
 
+// Displays information for always on UI
 function setConstUI(p){
 	bank_ui.innerHTML = p.bank;
 	research_ui.innerHTML = p.research;
 }
 
+// Initialize game components
 function init(){
 	canvas = document.getElementById('myCanvas');
 	ctx = canvas.getContext('2d');
@@ -38,7 +44,11 @@ function init(){
 	research_ui = document.getElementById("research_ui");
 	attack_stat_ui = [];
 	attack_stat_ui["val"] = $("#attack_stat_ui").children(".val").get(0);
-	attack_stat_ui["cost"] = $("#attack_stat_ui").children(".cost").get(0);
+	attack_stat_ui["costL"] = $("#attack_stat_ui").children(".costL").get(0);
+	attack_stat_ui["costW"] = $("#attack_stat_ui").children(".costW").get(0);
+	attack_stat_ui["costA"] = $("#attack_stat_ui").children(".costA").get(0);
+	
+	attack_list_ui = document.getElementById("attack_list_ui");
 	
 	//connect markers
 	initmarkers(game);
@@ -49,17 +59,28 @@ function init(){
 	//return 0;
 }
 
-
+// reset ui and context variables
 function reset_context(){
+	//close context specific ui
 	main_ui.style.display = "none";
 	dev_ui.style.display = "none";
 	mil_ui.style.display = "none";
 	res_ui.style.display = "none";
 	
-	attack_stat_ui["cost"].innerHTML = "-";
+	//clear potential attack stats
+	attack_stat_ui["costL"].innerHTML = "-";
+	attack_stat_ui["costW"].innerHTML = "-";
+	attack_stat_ui["costA"].innerHTML = "-";
 	attack_stat_ui["val"].innerHTML = "-";
 	
+	//clear attack list
+	attack_list_ui.innerHTML = "";
+	
+	//reset clicks
 	first_click = true;
+	pending_attack = null;
+	
+	//clear canvas
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -69,6 +90,7 @@ function home(){
 	reset_context();
 	main_ui.style.display = "block";
 	current_context = "home";
+	display_attacks(game);
 }
 
 function dev(){
@@ -81,6 +103,8 @@ function mil(){
 	reset_context();	
 	mil_ui.style.display = "block";
 	current_context = "mil";
+	display_attacks(game);
+	list_attacks(game);
 }
 
 function res(){
@@ -89,7 +113,28 @@ function res(){
 	current_context = "res";
 }
 
-function show_potential_attack_stats(c1,c2){
-	attack_stat_ui["cost"].innerHTML = "cost: " + 10;
-	attack_stat_ui["val"].innerHTML = c1 + " attacking " + c2;
+function list_attacks(gb){
+	for(i = 0; i < gb.attacks.length; i++){
+		var a = gb.attacks[i];
+		if(a.owner == "user"){
+			if(a.dir == 0){
+			attack_list_ui.innerHTML += a.edge.c1 + " -> " + a.edge.c2 + " X<br>";
+			}
+			else{attack_list_ui.innerHTML += a.edge.c2 + " -> " + a.edge.c1 + " X<br>";}
+			//append the new element
+		}
+	}
+}
+
+function show_potential_attack_stats(attack){
+	var land_cost = 8;
+	var water_cost = 10;
+	var air_cost = 4;
+	var c1, c2;
+	if(attack.dir == 0){c1 == attack.edge.c1; c2 == attack.edge.c2;}
+	else{c1 == attack.edge.c2; c2 == attack.edge.c1;}
+	attack_stat_ui["costL"].innerHTML = "L: " + attack.edge.land * land_cost;
+	attack_stat_ui["costW"].innerHTML = "W: " + attack.edge.water * water_cost;
+	attack_stat_ui["costA"].innerHTML = "A: " + attack.edge.air * air_cost;
+	attack_stat_ui["val"].innerHTML = attack.edge.c1 + " attacking " + attack.edge.c2;
 }

@@ -56,8 +56,10 @@ text-align:center;
 	color: white;
 }
 
-.cost {
+.costL, .costW, .costA {
+	width: 33%;
 	color: orange;
+	float: left;
 }
 
 .accept, .cancel {

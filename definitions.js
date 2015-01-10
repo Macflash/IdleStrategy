@@ -54,11 +54,20 @@ function edge(c1, c2, land, water, air){
 	this.air = air;
 }
 
+function attack(edge,dir,type,owner){
+	this.edge = edge;
+	this.dir = dir; //0 = normal(L->R) 1 = reverse(L<-R)
+	this.type = type;
+	this.owner = owner;
+	this.prog = 0;
+}
+
 // GameBoard
-// contains the information about the entire GameBoard
-function gameboard(countries, map, players, colors){
+//  contains the information about the entire GameBoard
+function gameboard(countries, map, players, colors, attacks){
 	this.countries = countries;
 	this.map = map;
 	this.players = players;
 	this.colors = colors;
+	this.attacks = attacks;
 }
