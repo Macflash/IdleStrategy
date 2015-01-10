@@ -12,6 +12,8 @@ var ctx;
 var bank_ui;
 var research_ui;
 
+var attack_stat_ui;
+
 function setConstUI(p){
 	bank_ui.innerHTML = p.bank;
 	research_ui.innerHTML = p.research;
@@ -34,6 +36,9 @@ function init(){
 	//connect player ui
 	bank_ui = document.getElementById("bank_ui");
 	research_ui = document.getElementById("research_ui");
+	attack_stat_ui = [];
+	attack_stat_ui["val"] = $("#attack_stat_ui").children(".val").get(0);
+	attack_stat_ui["cost"] = $("#attack_stat_ui").children(".cost").get(0);
 	
 	//connect markers
 	initmarkers(game);
@@ -50,6 +55,9 @@ function reset_context(){
 	dev_ui.style.display = "none";
 	mil_ui.style.display = "none";
 	res_ui.style.display = "none";
+	
+	attack_stat_ui["cost"].innerHTML = "-";
+	attack_stat_ui["val"].innerHTML = "-";
 	
 	first_click = true;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,4 +87,9 @@ function res(){
 	reset_context();	
 	res_ui.style.display = "block";
 	current_context = "res";
+}
+
+function show_potential_attack_stats(c1,c2){
+	attack_stat_ui["cost"].innerHTML = "cost: " + 10;
+	attack_stat_ui["val"].innerHTML = c1 + " attacking " + c2;
 }

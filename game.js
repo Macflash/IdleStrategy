@@ -101,7 +101,7 @@ function updateMarkers(gb){
 	}
 }
 
-function draw_arrow(sx,sy,ex,ey){
+function draw_arrow(sx,sy,ex,ey,color,width){
 	var dx,dy;
 	var l = Math.sqrt(Math.pow(ex - sx,2) + Math.pow(ey - sy,2));
 	dx = ex - sx;
@@ -126,8 +126,8 @@ function draw_arrow(sx,sy,ex,ey){
 	v2x = ex - h * ux - w * vx;
 	v2y = ey - h * uy - w * vy;
 	
-	ctx.strokeStyle = "red";
-	ctx.lineWidth = 3;
+	ctx.strokeStyle = color;
+	ctx.lineWidth = width;
 	ctx.translate(0,0);
 	ctx.scale(1,1);
     ctx.beginPath();
@@ -137,6 +137,30 @@ function draw_arrow(sx,sy,ex,ey){
     ctx.moveTo(ex,ey);
     ctx.lineTo(v2x,v2y);
     ctx.stroke();
+}
+
+function draw_potential_attack(start, end){
+	draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
+			parseInt(start.style.top.slice(0,-2),10)+15,
+			parseInt(end.style.left.slice(0,-2),10)+15,
+			parseInt(end.style.top.slice(0,-2),10)+15,
+			"red",4);
+	draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
+			parseInt(start.style.top.slice(0,-2),10)+15,
+			parseInt(end.style.left.slice(0,-2),10)+15,
+			parseInt(end.style.top.slice(0,-2),10)+15,
+			"orange",3);
+}
+
+function accept_attack(response){
+	if(current_context == "mil"){
+	console.log("attack: " + response);
+	//check response
+	if(response){
+		//add the attack to the list of all attacks if you can afford it
+	}
+	mil();
+	}
 }
 
 var first_click = true;
@@ -151,15 +175,15 @@ function clickHandler(id){
 		// second click = target country
 		else {
 			//show potential attack overlay
-			console.log(first_country + " attacks " + id);
-			
-			var start = document.getElementById(first_country);
-			var end = document.getElementById(id);
-			
-			draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
-					parseInt(start.style.top.slice(0,-2),10)+15,
-					parseInt(end.style.left.slice(0,-2),10)+15,
-					parseInt(end.style.top.slice(0,-2),10)+15);
+			if(first_country != id){
+				console.log(first_country + " attacks " + id);
+				var start = document.getElementById(first_country);
+				var end = document.getElementById(id);
+				draw_potential_attack(start,end);
+				
+				//display the cost and details of attack
+				show_potential_attack_stats(first_country, id);
+			}
 			first_country = null;
 			first_click = true;
 		}

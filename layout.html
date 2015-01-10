@@ -34,7 +34,13 @@
 
 <!-- Military UI Overlay -->
 <div id="mil-ui">
-<div class="row"><div class="cell" onclick="mil()">Mil</div></div>
+<div class="row">
+<div class="cell" id="attack_stat_ui">Attack
+<div class="val">-</div><div class="cost">-</div>
+<div class="accept" onclick="accept_attack(true)">&#x2713;</div>
+<div class="cancel" onclick="accept_attack(false)">X</div>
+</div>
+</div>
 </div>
 
 <!-- Research UI Overlay -->

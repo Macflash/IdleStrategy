@@ -28,7 +28,7 @@ text-align:center;
 }
 
 .map {
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0px;
 	z-index: -4;
@@ -56,6 +56,20 @@ text-align:center;
 	color: white;
 }
 
+.cost {
+	color: orange;
+}
+
+.accept, .cancel {
+	color: green;
+	float: left;
+	width:50%;
+}
+
+.cancel {
+	color: red;
+}
+
 .payBar, .upBar {
 	width: 100%;
 	height: 2px;
@@ -66,7 +80,7 @@ text-align:center;
 }
 
 .gamecanvas {
-	position: absolute;
+	position: fixed;
 	z-index:1;
 	top:0px;
 	left:0px;
