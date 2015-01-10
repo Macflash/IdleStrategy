@@ -116,12 +116,8 @@ function res(){
 function list_attacks(gb){
 	for(i = 0; i < gb.attacks.length; i++){
 		var a = gb.attacks[i];
-		if(a.owner == "user"){
-			if(a.dir == 0){
-			attack_list_ui.innerHTML += a.edge.c1 + " -> " + a.edge.c2 + " X<br>";
-			}
-			else{attack_list_ui.innerHTML += a.edge.c2 + " -> " + a.edge.c1 + " X<br>";}
-			//append the new element
+		if(a.owner == current_user){
+			attack_list_ui.innerHTML += a.c1 + " -> " + a.c2 + '<br><div style="color:red" onclick="remove_attack(' + a.c1 + ',' + a.c2 + ')">X</div>';
 		}
 	}
 }
@@ -130,11 +126,9 @@ function show_potential_attack_stats(attack){
 	var land_cost = 8;
 	var water_cost = 10;
 	var air_cost = 4;
-	var c1, c2;
-	if(attack.dir == 0){c1 == attack.edge.c1; c2 == attack.edge.c2;}
-	else{c1 == attack.edge.c2; c2 == attack.edge.c1;}
-	attack_stat_ui["costL"].innerHTML = "L: " + attack.edge.land * land_cost;
-	attack_stat_ui["costW"].innerHTML = "W: " + attack.edge.water * water_cost;
-	attack_stat_ui["costA"].innerHTML = "A: " + attack.edge.air * air_cost;
-	attack_stat_ui["val"].innerHTML = attack.edge.c1 + " attacking " + attack.edge.c2;
+	
+	attack_stat_ui["costL"].innerHTML = "L: " + attack.dist["land"] * land_cost;
+	attack_stat_ui["costW"].innerHTML = "W: " + attack.dist["water"] * water_cost;
+	attack_stat_ui["costA"].innerHTML = "A: " + attack.dist["air"] * air_cost;
+	attack_stat_ui["val"].innerHTML = attack.c1 + " attacking " + attack.c2;
 }

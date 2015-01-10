@@ -2,6 +2,18 @@ var tstep = 10;
 var tick = 500;
 var step = tick / tstep;
 
+var defaultCPayTicks = 5 * step; //5 ticks to payout
+var defaultCUpMult = 10 * step; //10 ticks * dev level to upgrade
+
+var defaultAttackSpeed = [];
+defaultAttackSpeed["land"] = 15 * step; //15 ticks per attack
+defaultAttackSpeed["water"] = 20 * step;
+defaultAttackSpeed["air"] = 10 * step;
+var defaultAttackCost = [];
+defaultAttackCost["land"] = 2 / step; //costs 2 dollars per tick
+defaultAttackCost["water"] = 3 / step;
+defaultAttackCost["air"] = 1 / step;
+
 // Country
 //  contains details about each Country
 function country(name, maxVal, dev, fort){
@@ -31,8 +43,8 @@ function player(name, color, bank, research){
 	this.color = color;
 	this.bank = bank;
 	this.research = research;
-	this.payMax = 5 * step;
-	this.upRate = 10 * step;
+	this.payMult = 1;
+	this.upMult = 1;
 }
 
 function player(name, color){
@@ -40,8 +52,19 @@ function player(name, color){
 	this.color = color;
 	this.bank = 0;
 	this.research = 0;
-	this.payMax = 5 * step;
-	this.upRate = 10 * step;
+	//country multipliers
+	this.payMult = 1;
+	this.upMult = 1;
+	this.maxMult = 1;
+	//attack multipliers
+	this.costMult = [];
+	this.costMult["land"] = 1;
+	this.costMult["water"] = 1;
+	this.costMult["air"] = 1;
+	this.speedMult = [];
+	this.speedMult["land"] = 1;
+	this.speedMult["water"] = 1;
+	this.speedMult["air"] = 1;
 }
 
 // Edge
@@ -54,12 +77,21 @@ function edge(c1, c2, land, water, air){
 	this.air = air;
 }
 
-function attack(edge,dir,type,owner){
-	this.edge = edge;
-	this.dir = dir; //0 = normal(L->R) 1 = reverse(L<-R)
+function attack(c1,c2,edge,type,owner){
+	console.log(c1);
+	this.c1 = c1;
+	this.c2 = c2;
 	this.type = type;
 	this.owner = owner;
 	this.prog = 0;
+	
+	if(type == "x"){
+		this.dist = [];
+		this.dist["land"] = edge["land"];
+		this.dist["water"] = edge["water"];
+		this.dist["air"] = edge["air"];
+	}
+	else { this.dist = edge[type]; }
 }
 
 // GameBoard

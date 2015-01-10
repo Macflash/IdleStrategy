@@ -1,6 +1,7 @@
 // Declare GameBoard
 var attacks = [];
 var game = new gameboard(countries,map,players,colors, attacks);
+var current_user = "user";
 
 // functions for running a turn
 // ideally called about once per sec
@@ -14,7 +15,7 @@ function update(){
 	//update markers
 	updateMarkers(game);
 	
-	//check if attacks are funded and draw on map
+	//update attacks
 	updateAttacks(game);
 	
 	//player1.bank = player1.bank + 1;
@@ -28,13 +29,13 @@ function updateProgress(gb){
 		if(c.owner == "neutral"){continue;}
 		//increment the payprog
 		c.payProg++;
-
-		if((c.dev + c.fort) < c.maxVal){
+		var owner = get_player(c.owner);
+		if((c.dev + c.fort) < c.maxVal * owner.maxMult){
 			//increment the upprog
 			c.upProg++;
 			
 			//check if there is a level up
-			if(c.upProg > c.dev * 10 * step){
+			if(c.upProg > c.dev * defaultCUpMult * owner.upMult){
 				c.upProg = 0;
 				c.dev++;
 			}
@@ -48,7 +49,7 @@ function updateBanks(gb){
 		var p = gb.players[i];
 		for(j = 0; j < gb.countries.length; j++){
 			if(gb.countries[j].owner == p.name){
-				if(gb.countries[j].payProg > p.payMax){
+				if(gb.countries[j].payProg > defaultCPayTicks * p.payMult){
 					p.bank += gb.countries[j].dev;
 					gb.countries[j].payProg = 0;
 				}
@@ -57,8 +58,44 @@ function updateBanks(gb){
 	}
 }
 
+//get player p
+function get_player(p){
+	for(i = 0; i < game.players.length;i++){
+		if(game.players[i].name == p){
+			return game.players[i];
+		}
+	}
+}
+
+function attack_cost(a, p){
+	return defaultAttackCost[a.type] * p.costMult[a.type];
+}
+
+function attack_speed(a, p){
+	return defaultAttackSpeed[a.type] * p.speedMult[a.type];
+}
+
 function updateAttacks(gb){
-	
+	//go through all the attacks
+	for(i = 0; i < gb.attacks.length; i++){
+		var a = gb.attacks[i];
+		var owner = get_player(a.owner);
+		//console.log(attack_cost(a, owner));
+		//check the owner owns the source country
+		if(!isOwnedBy(a.c1,owner.name) || owner.bank < attack_cost(a, owner)){
+			remove_attack(a.c1,a.c2);
+		}
+		else{
+			//fund them
+			owner.bank -= attack_cost(a,owner);
+			//progress them
+			a.prog++;
+			//reduce based on them
+			if(a.prog > attack_speed(a, owner)){
+				console.log("Attacked!");
+			}
+		}
+	}
 }
 
 function initmarkers(gb){
@@ -158,12 +195,9 @@ function draw_potential_attack(start, end){
 			"orange",3);
 }
 
-function draw_attack(attack){
-	var c1,c2;
-	if(attack.dir == 0){c1 = attack.edge.c1; c2 = attack.edge.c2;}
-	else{c1 = attack.edge.c2; c2 = attack.edge.c1;}
-	var start = document.getElementById(c1);
-	var end = document.getElementById(c2);
+function draw_attack(a){
+	var start = document.getElementById(a.c1);
+	var end = document.getElementById(a.c2);
 	draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
 			parseInt(start.style.top.slice(0,-2),10)+15,
 			parseInt(end.style.left.slice(0,-2),10)+15,
@@ -188,29 +222,34 @@ function find_edge(c1, c2){
 }
 
 function create_attack(edge, c1, c2){
-	//check which way the edge is
-	if(edge.c1 == c1 && edge.c2 == c2){
-		//normal
-		return new attack(edge, 0, "x", "user");
+	//console.log(c1);
+	return new attack(c1,c2,edge,"x",current_user);
+}
+
+function remove_attack(c1,c2){
+	if (typeof c1 != "string"){c1 = c1.id;}
+	if (typeof c2 != "string"){c2 = c2.id;}
+	//console.log("removing " + c1 + "->" + c2);
+	for(i = 0; i < game.attacks.length; i++){
+		if(game.attacks[i].c1 == c1 && game.attacks[i].c2 == c2){
+			game.attacks.splice(i,1);
+		}
 	}
-	else if(edge.c1 == c2 && edge.c2 == c1){
-		//reversed
-		return new attack(edge, 1, "x", "user");
-	}
+	mil();
 }
 
 function accept_attack(response){
 	if(current_context == "mil"){
-	console.log("attack: " + response);
+	//console.log("attack: " + response);
 	//check response
 	if(response){
 		//add the attack to the list of all attacks if you can afford it
 		//TODO, ADD AIR CHOICE
-		if(pending_attack.edge.land != null){pending_attack.type="land";}
-		else {pending_attack.type="water";}
+		if(pending_attack.dist["land"] != null){pending_attack.type="land";pending_attack.dist=pending_attack.dist["land"];}
+		else {pending_attack.type="water";pending_attack.dist=pending_attack.dist["water"];}
 		game.attacks.push(pending_attack);
 	}
-	console.log(game.attacks.length);
+	//console.log(game.attacks.length);
 	mil();
 	}
 }
@@ -226,15 +265,8 @@ function isOwnedBy(c,p){
 
 function attack_exists(c1,c2){
 	for(i = 0; i < game.attacks.length; i++){
-		if(game.attacks[i].dir == 0){
-			if(game.attacks[i].edge.c1 == c1 && game.attacks[i].edge.c2 == c2){
-				return true;
-			}
-		}
-		else{
-			if(game.attacks[i].edge.c1 == c2 && game.attacks[i].edge.c2 == c1){
-				return true;
-			}
+		if(game.attacks[i].c1 == c1 && game.attacks[i].c2 == c2){
+			return true;
 		}
 	}
 	return false;
@@ -246,17 +278,15 @@ var pending_attack = null;
 function clickHandler(id){
 	if(current_context == "mil"){
 		// in military mode first click = start country
-		if(first_click && isOwnedBy(id,"user")){
+		if(first_click && isOwnedBy(id,current_user)){
 			first_country = id;
 			first_click = false;
 		}
 		// second click = target country
 		else if(!first_click){
-			console.log(attack_exists(first_country,id));
+			//console.log(attack_exists(first_country,id));
 			//show potential attack overlay
-			if(first_country != id && !isOwnedBy(id,"user") && !attack_exists(first_country,id)){
-				//CHECK THAT THIS ATTACK DOESN'T ALREADY EXIST!
-				
+			if(first_country != id && !isOwnedBy(id,current_user) && !attack_exists(first_country,id)){
 				//console.log(first_country + " attacks " + id);
 				var start = document.getElementById(first_country);
 				var end = document.getElementById(id);
