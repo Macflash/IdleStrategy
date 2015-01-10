@@ -6,6 +6,8 @@ var res_ui;
 
 //used to determine what our country clicks mean
 var current_context = "home";
+var canvas;
+var ctx;
 
 var bank_ui;
 var research_ui;
@@ -16,6 +18,9 @@ function setConstUI(p){
 }
 
 function init(){
+	canvas = document.getElementById('myCanvas');
+	ctx = canvas.getContext('2d');
+	
 	//connect navigation ui
 	main_ui = document.getElementById("main-ui");
 	dev_ui = document.getElementById("dev-ui");
@@ -39,43 +44,39 @@ function init(){
 	//return 0;
 }
 
-// UI navigation functions
-function home(){
+
+function reset_context(){
+	main_ui.style.display = "none";
 	dev_ui.style.display = "none";
 	mil_ui.style.display = "none";
 	res_ui.style.display = "none";
 	
+	first_click = true;
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+
+// UI navigation functions
+function home(){
+	reset_context();
 	main_ui.style.display = "block";
-	current_context = "home"
-	//return 0;
+	current_context = "home";
 }
 
 function dev(){
-	main_ui.style.display = "none";
-	mil_ui.style.display = "none";
-	res_ui.style.display = "none";
-	
+	reset_context();
 	dev_ui.style.display = "block";
-	current_context = "dev"
-	//return 0;
+	current_context = "dev";
 }
 
 function mil(){
-	main_ui.style.display = "none";
-	mil_ui.style.display = "none";
-	res_ui.style.display = "none";
-	
+	reset_context();	
 	mil_ui.style.display = "block";
-	current_context = "mil"
-	//return 0;
+	current_context = "mil";
 }
 
 function res(){
-	main_ui.style.display = "none";
-	dev_ui.style.display = "none";
-	mil_ui.style.display = "none";
-	
+	reset_context();	
 	res_ui.style.display = "block";
-	current_context = "res"
-	//return 0;
+	current_context = "res";
 }

@@ -7,10 +7,11 @@
 <script type="text/javascript" src="main.js"></script>
 <link rel="stylesheet" type="text/css" href="layout.css" />
 <body onload="init()">
-<div class="gameboard">
 
 <!-- World Map -->
 <div class="map"><image src="map.png"/></div>
+
+<div class="gameboard">
 
 <!-- Player UI Overlay -->
 <div class="row">
@@ -53,4 +54,10 @@
 <div class="marker" id="Ukraine" style="top: 330px; left: 650px;" onclick="clickHandler(this.id)"><div class="val">X</div><div class="payBar"></div><div class="upBar"></div></div>
 
 </div>
+
+
+
+<canvas class="gamecanvas" id="myCanvas" width="1000px" height="720px"></canvas>
+
+
 </body>

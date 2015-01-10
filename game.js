@@ -101,11 +101,75 @@ function updateMarkers(gb){
 	}
 }
 
+function draw_arrow(sx,sy,ex,ey){
+	var dx,dy;
+	var l = Math.sqrt(Math.pow(ex - sx,2) + Math.pow(ey - sy,2));
+	dx = ex - sx;
+	dy = ey - sy;
+	
+	
+	ex = sx + ((l-22)/l) * dx;
+	ey = sy + ((l-22)/l) * dy;
+	
+	var h = 20;
+	var w = 12;
+	var ux,uy,vx,vy;
+	var l = Math.sqrt(Math.pow(ex - sx,2) + Math.pow(ey - sy,2));
+	ux = (ex - sx) / l;
+	uy = (ey - sy) / l;
+	vx = -1 * uy;
+	vy = ux;
+	
+	var v1x,v1y,v2x,v2y;
+	v1x = ex - h * ux + w * vx;
+	v1y = ey - h * uy + w * vy;
+	v2x = ex - h * ux - w * vx;
+	v2y = ey - h * uy - w * vy;
+	
+	ctx.strokeStyle = "red";
+	ctx.lineWidth = 3;
+	ctx.translate(0,0);
+	ctx.scale(1,1);
+    ctx.beginPath();
+    ctx.moveTo(sx,sy);
+    ctx.lineTo(ex,ey);
+    ctx.lineTo(v1x,v1y);
+    ctx.moveTo(ex,ey);
+    ctx.lineTo(v2x,v2y);
+    ctx.stroke();
+}
+
+var first_click = true;
+var first_country = null;
 function clickHandler(id){
+	if(current_context == "mil"){
+		// in military mode first click = start country
+		if(first_click){
+			first_country = id;
+			first_click = false;
+		}
+		// second click = target country
+		else {
+			//show potential attack overlay
+			console.log(first_country + " attacks " + id);
+			
+			var start = document.getElementById(first_country);
+			var end = document.getElementById(id);
+			
+			draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
+					parseInt(start.style.top.slice(0,-2),10)+15,
+					parseInt(end.style.left.slice(0,-2),10)+15,
+					parseInt(end.style.top.slice(0,-2),10)+15);
+			first_country = null;
+			first_click = true;
+		}
+	}
+	/*
 	//set the clicked country to be yours
 	for(j = 0; j < game.countries.length; j++){
 		if(game.countries[j].name == id){
 			game.countries[j].owner = "user";
 		}
 	}
+	*/
 }
