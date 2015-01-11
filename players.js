@@ -3,7 +3,7 @@ var players = [];
 var colors = [];
 
 var p;
-p = new player("user","green"); players.push(p);
+p = new player("user","green"); p.bank = 100; players.push(p);
 p = new player("enemy","red"); players.push(p);
 
 for(i = 0; i < players.length; i++){

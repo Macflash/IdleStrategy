@@ -84,6 +84,12 @@ function reset_context(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function refresh_context(){
+	if(current_context == "mil"){ mil(); }
+	else if(current_context == "dev"){ dev(); }
+	else if(current_context == "res"){ res(); }
+	else if(current_context == "home"){ home(); }
+}
 
 // UI navigation functions
 function home(){

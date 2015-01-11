@@ -12,11 +12,11 @@ function update(){
 	//update bank
 	updateBanks(game);
 	
-	//update markers
-	updateMarkers(game);
-	
 	//update attacks
 	updateAttacks(game);
+	
+	//update markers
+	updateMarkers(game);
 	
 	//player1.bank = player1.bank + 1;
 	setConstUI(game.players[0]);
@@ -67,6 +67,15 @@ function get_player(p){
 	}
 }
 
+//get country c
+function get_country(c){
+	for(i = 0; i < game.countries.length;i++){
+		if(game.countries[i].name == c){
+			return game.countries[i];
+		}
+	}
+}
+
 function attack_cost(a, p){
 	return defaultAttackCost[a.type] * p.costMult[a.type];
 }
@@ -92,9 +101,31 @@ function updateAttacks(gb){
 			a.prog++;
 			//reduce based on them
 			if(a.prog > attack_speed(a, owner)){
+				a.prog = 0;
 				console.log("Attacked!");
+				var c1 = get_country(a.c1);
+				var c2 = get_country(a.c2);
+				if(c2.fort * 2 <= c1.fort){
+					console.log("winner!");
+					remove_attack(a.c1,a.c2);
+					//attack wins! change the ownership
+					//console.log(c1.owner.toString());
+					//console.log(c2.owner);
+					//c2.owner = c1.owner;
+					//console.log(c1.owner);
+					//console.log(c2.owner);
+				}
+				else{
+					console.log("reduced!");
+					c2.fort--;
+					c2.dev--;
+				}
 			}
 		}
+	}
+	if(current_context == "mil" || current_context == "home"){
+		//clear canvas and redraw
+		display_attacks(game);
 	}
 }
 
@@ -150,7 +181,6 @@ function draw_arrow(sx,sy,ex,ey,color,width){
 	dx = ex - sx;
 	dy = ey - sy;
 	
-	
 	ex = sx + ((l-22)/l) * dx;
 	ey = sy + ((l-22)/l) * dy;
 	
@@ -182,6 +212,25 @@ function draw_arrow(sx,sy,ex,ey,color,width){
     ctx.stroke();
 }
 
+function draw_line(sx,sy,ex,ey,color,width,prog){
+	var dx,dy;
+	var l = Math.sqrt(Math.pow(ex - sx,2) + Math.pow(ey - sy,2));
+	dx = ex - sx;
+	dy = ey - sy;
+	
+	ex = sx + (prog / (l * 10)) * dx;
+	ey = sy + (prog / (l * 10)) * dy;
+
+	ctx.strokeStyle = color;
+	ctx.lineWidth = width;
+	ctx.translate(0,0);
+	ctx.scale(1,1);
+    ctx.beginPath();
+    ctx.moveTo(sx,sy);
+    ctx.lineTo(ex,ey);
+    ctx.stroke();
+}
+
 function draw_potential_attack(start, end){
 	draw_arrow(parseInt(start.style.left.slice(0,-2),10)+15,
 			parseInt(start.style.top.slice(0,-2),10)+15,
@@ -203,6 +252,11 @@ function draw_attack(a){
 			parseInt(end.style.left.slice(0,-2),10)+15,
 			parseInt(end.style.top.slice(0,-2),10)+15,
 			"red",3);
+	draw_line(parseInt(start.style.left.slice(0,-2),10)+15,
+			parseInt(start.style.top.slice(0,-2),10)+15,
+			parseInt(end.style.left.slice(0,-2),10)+15,
+			parseInt(end.style.top.slice(0,-2),10)+15,
+			"yellow",1,a.prog);
 }
 
 function display_attacks(gb){
@@ -227,20 +281,19 @@ function create_attack(edge, c1, c2){
 }
 
 function remove_attack(c1,c2){
-	if (typeof c1 != "string"){c1 = c1.id;}
-	if (typeof c2 != "string"){c2 = c2.id;}
+	if (typeof(c1) != "string"){c1 = c1.id;}
+	if (typeof(c2) != "string"){c2 = c2.id;}
 	//console.log("removing " + c1 + "->" + c2);
 	for(i = 0; i < game.attacks.length; i++){
 		if(game.attacks[i].c1 == c1 && game.attacks[i].c2 == c2){
 			game.attacks.splice(i,1);
 		}
 	}
-	mil();
+	refresh_context();
 }
 
 function accept_attack(response){
 	if(current_context == "mil"){
-	//console.log("attack: " + response);
 	//check response
 	if(response){
 		//add the attack to the list of all attacks if you can afford it
@@ -249,7 +302,6 @@ function accept_attack(response){
 		else {pending_attack.type="water";pending_attack.dist=pending_attack.dist["water"];}
 		game.attacks.push(pending_attack);
 	}
-	//console.log(game.attacks.length);
 	mil();
 	}
 }
@@ -284,10 +336,8 @@ function clickHandler(id){
 		}
 		// second click = target country
 		else if(!first_click){
-			//console.log(attack_exists(first_country,id));
 			//show potential attack overlay
 			if(first_country != id && !isOwnedBy(id,current_user) && !attack_exists(first_country,id)){
-				//console.log(first_country + " attacks " + id);
 				var start = document.getElementById(first_country);
 				var end = document.getElementById(id);
 
